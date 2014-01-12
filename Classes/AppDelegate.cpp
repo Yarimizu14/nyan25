@@ -8,7 +8,6 @@ AppDelegate::AppDelegate() {
 
 AppDelegate::~AppDelegate() 
 {
-    CCLog("yeahyeahyeah");
 }
 
 bool AppDelegate::applicationDidFinishLaunching() {
@@ -18,6 +17,9 @@ bool AppDelegate::applicationDidFinishLaunching() {
 
     pDirector->setOpenGLView(pEGLView);
 	
+    //default screen width defined as 1024: calculate scales
+    pDirector->setContentScaleFactor(1024.0 / pDirector->getWinSize().width);
+    
     // turn on display FPS
     pDirector->setDisplayStats(true);
 

@@ -18,5 +18,20 @@ bool GameScene::init()
     {
         return false;
     }
+    
+    //set Background
+    makeBackground();
+    
     return true;
+}
+
+void GameScene::makeBackground()
+{
+    //get scene width
+    CCSize winSize = CCDirector::sharedDirector()->getWinSize();
+    
+    //make background
+    CCSprite* pBG = CCSprite::create("background.png");
+    pBG->setPosition(ccp(winSize.width * 0.5, winSize.height * 0.5));
+    this->addChild(pBG);
 }

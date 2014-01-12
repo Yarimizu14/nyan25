@@ -5,9 +5,13 @@
 
 class GameScene : public cocos2d::CCLayer
 {
+    private :
+        void makeBackground();
+    
     public :
         virtual bool init();
         static cocos2d::CCScene* scene();
+        void scene2();
         CREATE_FUNC(GameScene);
 };
 
