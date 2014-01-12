@@ -24,11 +24,15 @@ bool GameScene::init()
     
     srand((unsigned)time(NULL));
     nextNumber = 1;
+    gametime = 0;
     
     setTouchEnabled(true);
     setTouchMode(kCCTouchesOneByOne);
     
     makeCards();
+    showGametimeLabel();
+    
+    this->schedule(schedule_selector(GameScene::measureGametime));
     
     return true;
 }
@@ -76,6 +80,35 @@ void GameScene::makeCards()
     }
 }
 
+
+void GameScene::measureGametime(float fDelta)
+{
+    gametime += fDelta;
+    CCLog("gametime: %f", gametime);
+    showGametimeLabel();
+}
+
+void GameScene::showGametimeLabel()
+{
+    const int tagGametimeLabel = 100;
+    
+    CCString* timeString = CCString::createWithFormat("%8.1fs", gametime);
+    
+    CCLabelTTF* timerLabel = (CCLabelTTF*)this->getChildByTag(tagGametimeLabel);
+    if (timerLabel) {
+        timerLabel->setString(timeString->getCString());
+    }
+    else
+    {
+        CCSize winSize = CCDirector::sharedDirector()->getWinSize();
+        
+        timerLabel = CCLabelTTF::create(timeString->getCString(), "Arial", 24.0);
+        timerLabel->setPosition(ccp(winSize.width*0.9, winSize.height*0.9));
+        timerLabel->setTag(tagGametimeLabel);
+        this->addChild(timerLabel);
+    }
+}
+
 bool GameScene::ccTouchBegan(cocos2d::CCTouch *pTouch, cocos2d::CCEvent *pEvent){
     return true;
 }
@@ -101,6 +134,7 @@ void GameScene::ccTouchEnded(cocos2d::CCTouch *pTouch, cocos2d::CCEvent *pEvent)
         
         if (nextNumber >= 25)
         {
+            this->unschedule(schedule_selector(GameScene::measureGametime));
             return;
         }
         nextNumber++;

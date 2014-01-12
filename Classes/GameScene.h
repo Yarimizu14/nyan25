@@ -7,8 +7,12 @@ class GameScene : public cocos2d::CCLayer
 {
     private :
         int nextNumber;
+        float gametime;
+    
         void makeBackground();
         void makeCards();
+        void measureGametime(float fDelta);
+        void showGametimeLabel();
     
     public :
         virtual bool init();
