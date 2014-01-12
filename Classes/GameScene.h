@@ -7,6 +7,7 @@ class GameScene : public cocos2d::CCLayer
 {
     private :
         void makeBackground();
+        void makeCards();
     
     public :
         virtual bool init();
