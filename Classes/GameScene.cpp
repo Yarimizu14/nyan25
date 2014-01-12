@@ -23,6 +23,10 @@ bool GameScene::init()
     makeBackground();
     
     srand((unsigned)time(NULL));
+    nextNumber = 1;
+    
+    setTouchEnabled(true);
+    setTouchMode(kCCTouchesOneByOne);
     
     makeCards();
     
@@ -70,4 +74,37 @@ void GameScene::makeCards()
             numbers->removeObjectAtIndex(index);
         }
     }
+}
+
+bool GameScene::ccTouchBegan(cocos2d::CCTouch *pTouch, cocos2d::CCEvent *pEvent){
+    return true;
+}
+
+void GameScene::ccTouchEnded(cocos2d::CCTouch *pTouch, cocos2d::CCEvent *pEvent){
+    
+    CCDirector* pDirector = CCDirector::sharedDirector();
+    CCPoint touchPoint = pDirector->convertToGL(pTouch->getLocationInView());
+  
+    CCNode* pCard = this->getChildByTag(nextNumber);
+    if (!pCard)
+    {
+        return;
+    }
+    
+    CCRect cardRect = pCard->boundingBox();
+    if (cardRect.containsPoint(touchPoint)) {
+        CCSprite* pNewCard = CCSprite::create("card_backside.png");
+        pNewCard->setPosition(pCard->getPosition());
+        this->addChild(pNewCard);
+        
+        pCard->removeFromParentAndCleanup(true);
+        
+        if (nextNumber >= 25)
+        {
+            return;
+        }
+        nextNumber++;
+    }
+    
+    CCLog("x: %f, y:%f", touchPoint.x, touchPoint.y);
 }
