@@ -13,6 +13,9 @@ class GameScene : public cocos2d::CCLayer
         void makeCards();
         void measureGametime(float fDelta);
         void showGametimeLabel();
+        void makeRetryButton();
+        void tapRetryButton(CCNode *node);
+        void showHighScoreLabel();
     
     public :
         virtual bool init();

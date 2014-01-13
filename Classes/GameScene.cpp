@@ -33,6 +33,8 @@ bool GameScene::init()
     showGametimeLabel();
     
     this->schedule(schedule_selector(GameScene::measureGametime));
+    makeRetryButton();
+    showHighScoreLabel();
     
     return true;
 }
@@ -84,7 +86,7 @@ void GameScene::makeCards()
 void GameScene::measureGametime(float fDelta)
 {
     gametime += fDelta;
-    CCLog("gametime: %f", gametime);
+    //CCLog("gametime: %f", gametime);
     showGametimeLabel();
 }
 
@@ -135,10 +137,73 @@ void GameScene::ccTouchEnded(cocos2d::CCTouch *pTouch, cocos2d::CCEvent *pEvent)
         if (nextNumber >= 25)
         {
             this->unschedule(schedule_selector(GameScene::measureGametime));
+            showHighScoreLabel();
             return;
         }
         nextNumber++;
     }
     
-    CCLog("x: %f, y:%f", touchPoint.x, touchPoint.y);
+    //CCLog("x: %f, y:%f", touchPoint.x, touchPoint.y);
+}
+
+void GameScene::makeRetryButton() {
+    CCSize winSize = CCDirector::sharedDirector()->getWinSize();
+    
+    CCLabelTTF* retryLabel = CCLabelTTF::create("Retry", "Arial", 24.0);
+    CCMenuItemLabel* retryItem = CCMenuItemLabel::create(retryLabel, this, menu_selector(GameScene::tapRetryButton));
+    retryLabel->setPosition(ccp(winSize.width*0.9, winSize.height*0.2));
+    
+    CCMenu* menu = CCMenu::create(retryItem, NULL);
+    menu->setPosition(CCPointZero);
+    this->addChild(menu);
+}
+
+
+void GameScene::tapRetryButton(CCNode *node) {
+    CCLog("test");
+    CCScene* gameScene = (CCScene*)GameScene::create();
+    CCDirector::sharedDirector()->replaceScene(gameScene);
+}
+
+void GameScene::showHighScoreLabel() {
+    CCUserDefault* userDefault = CCUserDefault::sharedUserDefault();
+    
+    const char* highScorekey = "hightscore";
+    
+    float highScore = userDefault->getFloatForKey(highScorekey, 99.9);
+    if (gametime != 0)
+    {
+        if (gametime > highScore)
+        {
+            return;
+        }
+        else
+        {
+            highScore = gametime;
+            
+            userDefault->setFloatForKey(highScorekey, highScore);
+            userDefault->flush();
+        }
+    }
+    
+    const int tagHighScoreLabel = 200;
+    
+    CCString* highScoreString = CCString::createWithFormat("%8.1fs", highScore);
+    
+    CCLabelTTF* highScoreLabel = (CCLabelTTF*)this->getChildByTag(tagHighScoreLabel);
+    
+    if (highScoreLabel)
+    {
+        highScoreLabel->setString(highScoreString->getCString());
+    }
+    else
+    {
+        CCSize winSize = CCDirector::sharedDirector()->getWinSize();
+        
+        highScoreLabel = CCLabelTTF::create(highScoreString->getCString(), "Arial", 24.0);
+        highScoreLabel->setPosition(ccp(winSize.width*0.9, winSize.height*0.7));
+        highScoreLabel->setTag(tagHighScoreLabel);
+        this->addChild(highScoreLabel);
+    }
+    
 }
